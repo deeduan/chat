@@ -1,0 +1,10 @@
+.DS*
+*.DS_Store
+*.idea
+*.log
+*~
+*.swp
+
+# vendor
+
+vendor/
