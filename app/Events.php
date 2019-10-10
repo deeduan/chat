@@ -42,7 +42,6 @@ class Events
         // 用户发来消息时, 转发给指定的客服, 这里我们需要保存客服的客户端连接
         // 客服的客户端连接, 需要一直给服务端发送心跳包
 
-
         // 向所有人发送
         Gateway::sendToAll("$client_id said $message\r\n");
     }
