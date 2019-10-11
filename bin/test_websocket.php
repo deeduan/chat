@@ -22,6 +22,7 @@ function connect(){
     if ($count++ >= 200) return;
     // 建立异步链接
     $con = new AsyncTcpConnection('ws://127.0.0.1:8282');
+    $con->tipNumber = $count;
     $con->onConnect = function($con) {
         // 递归调用connect
         connect();
@@ -29,9 +30,11 @@ function connect(){
     $con->onMessage = function($con, $msg) {
         // echo "recv $msg\n";
     };
+
     $con->onClose = function($con) {
-        echo "con close\n";
+        echo "con close $con->tipNumber \n";
     };
+
     // 当前链接每10秒发个心跳包
     Timer::add(10, function()use($con){
         $con->send("ping");
