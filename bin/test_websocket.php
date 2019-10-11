@@ -21,7 +21,7 @@ function connect(){
     // 2000个链接
     if ($count++ >= 200) return;
     // 建立异步链接
-    $con = new AsyncTcpConnection('text://127.0.0.1:8282');
+    $con = new AsyncTcpConnection('ws://127.0.0.1:8282');
     $con->onConnect = function($con) {
         // 递归调用connect
         connect();
