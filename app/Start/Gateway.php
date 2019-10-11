@@ -26,9 +26,9 @@ class Gateway
         // 则一般会使用4000 4001 4002 4003 4个端口作为内部通讯端口
         $gateway->startPort = 4000;
 
-        // 心跳
-        $gateway->pingInterval = 30;
-        $gateway->pingNotResponseLimit = 1;
+        // 暂时不处理心跳
+//        $gateway->pingInterval = 30;
+//        $gateway->pingNotResponseLimit = 1;
 
         // 服务注册地址
         $gateway->registerAddress = '127.0.0.1:1238';
@@ -41,4 +41,5 @@ class Gateway
     {
 
     }
+
 }
