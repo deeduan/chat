@@ -13,12 +13,7 @@ use Workerman\Worker;
 use Workerman\Lib\Timer;
 use Workerman\Connection\AsyncTcpConnection;
 
-
 function connect() {
-//        static $count = 0;
-//
-//        // 2000个链接
-//        if ($count++ >= 2000) return;
     // 建立异步链接
     $con = new AsyncTcpConnection('ws://127.0.0.1:8282');
 
@@ -36,7 +31,7 @@ function connect() {
     };
 
     // 定时器 每10s发送一个消息
-    Timer::add(10, function()use($con){
+    Timer::add(3, function()use($con){
         $con->send("ping test");
     });
 
@@ -48,13 +43,12 @@ function connect() {
 for ($i = 0; $i < 2000; $i++) {
 
     $worker = new Worker();
-// 单进程
+
     $worker->count = 1;
 
     $worker->onWorkerStart = 'connect';
 
 }
-
 
 // 压测10分钟  10分钟后关掉客户端
 //Timer::add(10 * 60, function(){
