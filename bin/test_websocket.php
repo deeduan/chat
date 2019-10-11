@@ -14,6 +14,37 @@ use Workerman\Lib\Timer;
 use Workerman\Connection\AsyncTcpConnection;
 
 
+function connect() {
+//        static $count = 0;
+//
+//        // 2000个链接
+//        if ($count++ >= 2000) return;
+    // 建立异步链接
+    $con = new AsyncTcpConnection('ws://127.0.0.1:8282');
+
+    // 顺序建立链接
+    $con->onConnect = function($con) {
+//        connect();
+    };
+
+    $con->onMessage = function($con, $msg) {
+        echo "recv $msg\n";
+    };
+
+    $con->onClose = function($con) {
+        echo "con close\n";
+    };
+
+    // 定时器 每10s发送一个消息
+    Timer::add(10, function()use($con){
+        $con->send("ping test");
+    });
+
+    $con->connect();
+
+    echo " connections complete\r\n";
+}
+
 for ($i = 0; $i < 2000; $i++) {
 
     $worker = new Worker();
@@ -21,36 +52,6 @@ for ($i = 0; $i < 2000; $i++) {
     $worker->count = 1;
 
     $worker->onWorkerStart = 'connect';
-    function connect() {
-//        static $count = 0;
-//
-//        // 2000个链接
-//        if ($count++ >= 2000) return;
-        // 建立异步链接
-        $con = new AsyncTcpConnection('ws://127.0.0.1:8282');
-
-        // 顺序建立链接
-        $con->onConnect = function($con) {
-            connect();
-        };
-
-        $con->onMessage = function($con, $msg) {
-            echo "recv $msg\n";
-        };
-
-        $con->onClose = function($con) {
-            echo "con close\n";
-        };
-
-        // 定时器 每10s发送一个消息
-        Timer::add(10, function()use($con){
-            $con->send("ping test");
-        });
-
-        $con->connect();
-
-        echo " connections complete\r\n";
-    }
 
 }
 
