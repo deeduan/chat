@@ -14,7 +14,7 @@ use Workerman\Lib\Timer;
 use Workerman\Connection\AsyncTcpConnection;
 
 
-//for ($i = 0; $i < 2000; $i++) {
+for ($i = 0; $i < 2000; $i++) {
 
     $worker = new Worker();
 // 单进程
@@ -52,15 +52,17 @@ use Workerman\Connection\AsyncTcpConnection;
         echo " connections complete\r\n";
     }
 
-    // 压测10分钟  10分钟后关掉客户端
-    Timer::add(10 * 60, function(){
-        file_put_contents('/tmp/workerman_stop', time());
+}
 
-        $master_pid = \is_file(Worker::$pidFile) ? \file_get_contents(Worker::$pidFile) : 0;
 
-        // 给客户端发送一个平滑停止信号
-        \posix_kill($master_pid, SIGTERM);
-    });
-//}
+// 压测10分钟  10分钟后关掉客户端
+//Timer::add(10 * 60, function(){
+//    file_put_contents('/tmp/workerman_stop', time());
+//
+//    $master_pid = \is_file(Worker::$pidFile) ? \file_get_contents(Worker::$pidFile) : 0;
+//
+//    // 给客户端发送一个平滑停止信号
+//    \posix_kill($master_pid, SIGTERM);
+//});
 
 Worker::runAll();
