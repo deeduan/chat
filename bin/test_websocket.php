@@ -9,55 +9,35 @@
 
 
 require_once __DIR__."/../vendor/autoload.php";
+
 use Workerman\Worker;
 use Workerman\Lib\Timer;
 use Workerman\Connection\AsyncTcpConnection;
 
-function connect() {
+$worker = new Worker();
+$worker->onWorkerStart = 'connect';
+function connect(){
+    static $count = 0;
+    // 2000个链接
+    if ($count++ >= 200) return;
     // 建立异步链接
-    $con = new AsyncTcpConnection('ws://127.0.0.1:8282');
-
-    // 顺序建立链接
+    $con = new AsyncTcpConnection('text://127.0.0.1:8282');
     $con->onConnect = function($con) {
-//        connect();
+        // 递归调用connect
+        connect();
     };
-
     $con->onMessage = function($con, $msg) {
-        echo "recv $msg\n";
+        // echo "recv $msg\n";
     };
-
     $con->onClose = function($con) {
         echo "con close\n";
     };
-
-    // 定时器 每10s发送一个消息
-    Timer::add(3, function()use($con){
-        $con->send("ping test");
+    // 当前链接每10秒发个心跳包
+    Timer::add(10, function()use($con){
+        $con->send("ping");
     });
-
     $con->connect();
-
-    echo " connections complete\r\n";
+    echo $count, " connections complete\n";
 }
-
-for ($i = 0; $i < 2000; $i++) {
-
-    $worker = new Worker();
-
-    $worker->count = 1;
-
-    $worker->onWorkerStart = 'connect';
-
-}
-
-// 压测10分钟  10分钟后关掉客户端
-//Timer::add(10 * 60, function(){
-//    file_put_contents('/tmp/workerman_stop', time());
-//
-//    $master_pid = \is_file(Worker::$pidFile) ? \file_get_contents(Worker::$pidFile) : 0;
-//
-//    // 给客户端发送一个平滑停止信号
-//    \posix_kill($master_pid, SIGTERM);
-//});
 
 Worker::runAll();
