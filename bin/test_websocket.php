@@ -20,6 +20,7 @@ $worker->count = 1;
 $worker->onWorkerStart = 'connect';
 function connect(){
     static $count = 0;
+
     // 2000个链接
     if ($count++ >= 2000) return;
     // 建立异步链接
@@ -50,11 +51,12 @@ function connect(){
 
 // 压测10分钟  10分钟后关掉客户端
 Timer::add(10 * 60, function(){
+    file_put_contents('/tmp/workerman_stop', time());
+
     $master_pid = \is_file(Worker::$pidFile) ? \file_get_contents(Worker::$pidFile) : 0;
 
     // 给客户端发送一个平滑停止信号
     \posix_kill($master_pid, SIGTERM);
 });
-
 
 Worker::runAll();
