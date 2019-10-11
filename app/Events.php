@@ -27,7 +27,7 @@ class Events
         // 向当前client_id发送数据
         // Gateway::sendToClient($client_id, "Hello $client_id\r\n");
         // 客户端上线之后, 广播消息群发给所有人
-        Gateway::sendToAll("$client_id login\r\n");
+        // Gateway::sendToAll("$client_id login\r\n");
     }
 
     /**
